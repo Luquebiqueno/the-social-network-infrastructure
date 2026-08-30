@@ -1,7 +1,7 @@
-aws_region = "eu-west-1"
+aws_region = "us-east-1"
 owner      = "your-name"
 
 # Optional. Leave unset to generate a name from the AWS account ID and Region.
-# state_bucket_name = "tsn-terraform-state-123456789012-eu-west-1"
+# state_bucket_name = "tsn-terraform-state-123456789012-us-east-1"
 
 noncurrent_version_expiration_days = 90

@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+exec > >(tee /var/log/tsn-user-data.log | logger -t tsn-user-data -s 2>/dev/console) 2>&1
+
+export DEBIAN_FRONTEND=noninteractive
+
+apt-get update
+apt-get install --yes --no-install-recommends \
+  ca-certificates \
+  curl \
+  gnupg \
+  unzip
+
+install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+  -o /etc/apt/keyrings/docker.asc
+chmod a+r /etc/apt/keyrings/docker.asc
+
+. /etc/os-release
+
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $VERSION_CODENAME stable" \
+  > /etc/apt/sources.list.d/docker.list
+
+apt-get update
+apt-get install --yes --no-install-recommends \
+  containerd.io \
+  docker-buildx-plugin \
+  docker-ce \
+  docker-ce-cli \
+  docker-compose-plugin
+
+systemctl enable --now docker
+
+if snap list amazon-ssm-agent >/dev/null 2>&1; then
+  snap start amazon-ssm-agent || true
+fi
+
+usermod -aG docker ubuntu
+
+install -d \
+  -o ubuntu \
+  -g ubuntu \
+  -m 0750 \
+  "${application_directory}" \
+  "${application_directory}/config" \
+  "${application_directory}/deployments"
+
+docker --version
+docker compose version

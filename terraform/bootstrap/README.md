@@ -51,7 +51,7 @@ The bootstrap is executed once during project setup and only rerun when its own 
 - an AWS account with MFA enabled;
 - non-root AWS credentials;
 - permission to create and configure an S3 bucket;
-- AWS Region `eu-west-1`.
+- AWS Region `us-east-1`.
 
 Confirm the active AWS identity before applying:
 
@@ -71,7 +71,7 @@ cp terraform.tfvars.example terraform.tfvars
 Set the owner:
 
 ```hcl
-aws_region = "eu-west-1"
+aws_region = "us-east-1"
 owner      = "your-name"
 ```
 
@@ -137,7 +137,7 @@ terraform {
   backend "s3" {
     bucket       = "BUCKET_NAME_FROM_BOOTSTRAP_OUTPUT"
     key          = "environments/development/terraform.tfstate"
-    region       = "eu-west-1"
+    region       = "us-east-1"
     encrypt      = true
     use_lockfile = true
   }

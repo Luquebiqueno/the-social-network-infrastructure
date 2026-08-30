@@ -102,7 +102,7 @@ Start with resources directly inside `environments/development`. Extract a modul
 - AWS CLI;
 - an AWS account with MFA enabled;
 - authenticated access to AWS;
-- AWS Region `eu-west-1`.
+- AWS Region `us-east-1`.
 
 ## Bootstrap
 
