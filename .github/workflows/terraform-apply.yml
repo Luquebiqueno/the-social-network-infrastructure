@@ -44,6 +44,36 @@ jobs:
           test -n "$TF_STATE_BUCKET" || { echo "Missing repository variable: TF_STATE_BUCKET"; exit 1; }
           test -n "$TF_VAR_owner" || { echo "Missing repository variable: TF_OWNER"; exit 1; }
 
+      - name: Show OIDC claims
+        shell: bash
+        run: |
+          set +x
+
+          RESPONSE="$(curl --silent --show-error --fail \
+          --header "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
+          "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=sts.amazonaws.com")"
+
+          ID_TOKEN="$(echo "$RESPONSE" | jq --raw-output '.value')"
+
+          ID_TOKEN="$ID_TOKEN" python3 <<'PY'
+          import os
+          import json
+          import base64
+
+          token = os.environ["ID_TOKEN"]
+          payload = token.split(".")[1]
+          payload += "=" * (-len(payload) % 4)
+          claims = json.loads(base64.urlsafe_b64decode(payload))
+
+          print("aud =", claims.get("aud"))
+          print("sub =", claims.get("sub"))
+          print("repository =", claims.get("repository"))
+          print("repository_owner =", claims.get("repository_owner"))
+          print("ref =", claims.get("ref"))
+          print("environment =", claims.get("environment"))
+          print("event_name =", claims.get("event_name"))
+          PY
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
