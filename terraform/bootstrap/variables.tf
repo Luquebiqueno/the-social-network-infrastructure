@@ -36,3 +36,20 @@ variable "noncurrent_version_expiration_days" {
     error_message = "Noncurrent state versions must be retained for at least 30 days."
   }
 }
+
+variable "github_owner" {
+  description = "GitHub user or organization that owns the repository."
+  type        = string
+}
+
+variable "github_repository" {
+  description = "Infrastructure repository name."
+  type        = string
+  default     = "the-social-network-infrastructure"
+}
+
+variable "github_environment" {
+  description = "GitHub Environment used by the Terraform apply workflow."
+  type        = string
+  default     = "development"
+}
