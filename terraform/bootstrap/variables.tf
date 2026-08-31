@@ -40,6 +40,7 @@ variable "noncurrent_version_expiration_days" {
 variable "github_owner" {
   description = "GitHub user or organization that owns the repository."
   type        = string
+  default     = "Luquebiqueno"
 }
 
 variable "github_repository" {
