@@ -6,9 +6,9 @@ resource "aws_instance" "this" {
   iam_instance_profile        = var.iam_instance_profile_name
   associate_public_ip_address = var.associate_public_ip_address
 
-  monitoring              = var.enable_detailed_monitoring
-  disable_api_termination = var.enable_termination_protection
- instance_initiated_shutdown_behavior = "stop"
+  monitoring                           = var.enable_detailed_monitoring
+  disable_api_termination              = var.enable_termination_protection
+  instance_initiated_shutdown_behavior = "stop"
 
   user_data = templatefile("${path.module}/user-data.sh.tftpl", {
     application_directory = var.application_directory
