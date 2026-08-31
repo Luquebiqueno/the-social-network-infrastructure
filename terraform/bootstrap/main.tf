@@ -130,7 +130,8 @@ data "aws_iam_policy_document" "github_actions_assume_role" {
 
       values = [
         "repo:${var.github_owner}/${var.github_repository}:pull_request",
-        "repo:${var.github_owner}/${var.github_repository}:environment:${var.github_environment}"
+        "repo:${var.github_owner}/${var.github_repository}:environment:${var.github_environment}",
+        "repo:${var.github_owner}/${var.github_repository}:ref:refs/heads/develop"
       ]
     }
   }
