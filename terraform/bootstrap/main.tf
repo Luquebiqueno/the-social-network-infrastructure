@@ -282,6 +282,33 @@ data "aws_iam_policy_document" "github_actions_permissions" {
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:instance-profile/${var.project_name}-*"
     ]
   }
+
+  statement {
+    sid       = "ManageRDS"
+    effect    = "Allow"
+    actions   = ["rds:*"]
+    resources = ["*"]
+  }
+
+  statement {
+    sid    = "ManageRDSSecrets"
+    effect = "Allow"
+  
+    actions = [
+      "secretsmanager:CreateSecret",
+      "secretsmanager:TagResource",
+      "secretsmanager:DescribeSecret"
+    ]
+  
+    resources = ["*"]
+  }
+  
+  statement {
+    sid       = "ManageKMS"
+    effect    = "Allow"
+    actions   = ["kms:*"]
+    resources = ["*"]
+  }
 }
 
 resource "aws_iam_policy" "github_actions" {
