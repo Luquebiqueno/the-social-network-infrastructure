@@ -272,6 +272,8 @@ data "aws_iam_policy_document" "github_actions_permissions" {
       "iam:CreateInstanceProfile",
       "iam:GetInstanceProfile",
       "iam:DeleteInstanceProfile",
+      "iam:TagInstanceProfile",
+      "iam:UntagInstanceProfile",
       "iam:AddRoleToInstanceProfile",
       "iam:RemoveRoleFromInstanceProfile",
       "iam:ListInstanceProfilesForRole"
