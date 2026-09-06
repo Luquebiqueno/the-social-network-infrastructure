@@ -211,6 +211,26 @@ data "aws_iam_policy_document" "github_actions_permissions" {
   }
 
   statement {
+    sid       = "ManageRDS"
+    effect    = "Allow"
+    actions   = ["rds:*"]
+    resources = ["*"]
+  }
+
+  statement {
+    sid       = "CreateRDSServiceLinkedRole"
+    effect    = "Allow"
+    actions   = ["iam:CreateServiceLinkedRole"]
+    resources = ["arn:aws:iam::*:role/aws-service-role/rds.amazonaws.com/AWSServiceRoleForRDS"]
+
+    condition {
+      test     = "StringLike"
+      variable = "iam:AWSServiceName"
+      values   = ["rds.amazonaws.com"]
+    }
+  }
+
+  statement {
     sid    = "ReadSSMParameters"
     effect = "Allow"
 
