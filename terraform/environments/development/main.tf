@@ -52,6 +52,30 @@ module "ec2" {
   tags = local.common_tags
 }
 
+module "rds" {
+  source = "../../modules/rds"
+
+  name_prefix                = local.name_prefix
+  environment                = var.environment
+  vpc_id                     = module.networking.vpc_id
+  subnet_ids                 = module.networking.private_subnet_ids
+  allowed_security_group_ids = [module.security.ec2_security_group_id]
+
+  database_name     = var.db_name
+  master_username   = var.db_master_username
+  engine_version    = var.db_engine_version
+  instance_class    = var.db_instance_class
+  allocated_storage = var.db_allocated_storage
+
+  multi_az                = var.db_multi_az
+  backup_retention_period = var.db_backup_retention_period
+  deletion_protection     = var.db_deletion_protection
+  skip_final_snapshot     = var.db_skip_final_snapshot
+  apply_immediately       = true
+
+  tags = local.common_tags
+}
+
 module "monitoring" {
   source = "../../modules/monitoring"
 

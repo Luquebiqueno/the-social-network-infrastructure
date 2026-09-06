@@ -26,5 +26,11 @@ ecr_repository_names = [
   "frontend"
 ]
 
+db_name             = "the_social_network"
+db_master_username  = "tsn_admin"
+db_engine_version   = "16.4"
+db_instance_class   = "db.t3.micro"
+db_allocated_storage = 20
+
 # Optional. Do not commit a real email address in terraform.tfvars.
 # alert_email = "alerts@example.com"

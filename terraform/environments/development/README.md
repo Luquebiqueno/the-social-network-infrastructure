@@ -12,6 +12,7 @@ development
 ├── ecr
 ├── security
 ├── ec2
+├── rds
 └── monitoring
 ```
 
@@ -21,6 +22,8 @@ Each environment uses its own remote state. Local Terraform and GitHub Actions m
 
 ```text
 networking ──→ security ──→ ec2 ──→ monitoring
+     │              ↑
+     └──→ rds ───────┘
                     ↑
 ecr ────────────────┘
 ```
@@ -29,6 +32,7 @@ ecr ────────────────┘
 - `ecr` creates the Docker image repositories;
 - `security` creates the EC2 security group, IAM role, and instance profile;
 - `ec2` creates the Docker host;
+- `rds` creates the PostgreSQL database in private subnets, reachable only from the EC2 security group;
 - `monitoring` creates logs, alarms, and notifications.
 
 ## Prerequisites
@@ -127,4 +131,5 @@ All referenced modules are implemented. Terraform derives their dependency order
 1. `networking` and `ecr` can be created independently;
 2. `security` uses outputs from both;
 3. `ec2` uses networking and security outputs;
-4. `monitoring` uses the EC2 instance ID.
+4. `rds` uses the private subnets from `networking` and the EC2 security group ID from `security`;
+5. `monitoring` uses the EC2 instance ID.

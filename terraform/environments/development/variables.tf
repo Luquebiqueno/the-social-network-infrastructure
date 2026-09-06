@@ -80,6 +80,60 @@ variable "ecr_repository_names" {
   default     = ["backend", "frontend"]
 }
 
+variable "db_name" {
+  description = "Name of the default PostgreSQL database created on the RDS instance."
+  type        = string
+  default     = "the_social_network"
+}
+
+variable "db_master_username" {
+  description = "Master username for the RDS PostgreSQL instance."
+  type        = string
+  default     = "tsn_admin"
+}
+
+variable "db_engine_version" {
+  description = "PostgreSQL engine version used by the RDS instance."
+  type        = string
+  default     = "16.4"
+}
+
+variable "db_instance_class" {
+  description = "RDS instance class used by the development database."
+  type        = string
+  default     = "db.t3.micro"
+}
+
+variable "db_allocated_storage" {
+  description = "Initial allocated storage in GiB for the RDS instance."
+  type        = number
+  default     = 20
+}
+
+variable "db_multi_az" {
+  description = "Deploys a standby replica in a second Availability Zone."
+  type        = bool
+  default     = false
+}
+
+variable "db_backup_retention_period" {
+  description = "Number of days automated RDS backups are retained."
+  type        = number
+  default     = 7
+}
+
+variable "db_deletion_protection" {
+  description = "Protects the RDS instance from accidental deletion."
+  type        = bool
+  default     = false
+}
+
+variable "db_skip_final_snapshot" {
+  description = "Skips the final snapshot when the RDS instance is destroyed. Keep true only in disposable development environments."
+  type        = bool
+  default     = true
+}
+
 variable "alert_email" {
   description = "Optional email address subscribed to infrastructure alerts."
   type        = string
