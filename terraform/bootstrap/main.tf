@@ -284,13 +284,6 @@ data "aws_iam_policy_document" "github_actions_permissions" {
   }
 
   statement {
-    sid       = "ManageRDS"
-    effect    = "Allow"
-    actions   = ["rds:*"]
-    resources = ["*"]
-  }
-
-  statement {
     sid    = "ManageRDSSecrets"
     effect = "Allow"
 
@@ -300,13 +293,6 @@ data "aws_iam_policy_document" "github_actions_permissions" {
       "secretsmanager:DescribeSecret"
     ]
 
-    resources = ["*"]
-  }
-
-  statement {
-    sid       = "ManageKMS"
-    effect    = "Allow"
-    actions   = ["kms:*"]
     resources = ["*"]
   }
 }
