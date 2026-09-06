@@ -47,3 +47,8 @@ output "db_subnet_group_name" {
   description = "Name of the DB subnet group used by the RDS instance."
   value       = aws_db_subnet_group.this.name
 }
+
+output "kms_key_arn" {
+  description = "ARN of the KMS key created by this module for RDS encryption, or null when kms_key_id and master_user_secret_kms_key_id were both supplied explicitly."
+  value       = try(aws_kms_key.rds[0].arn, null)
+}

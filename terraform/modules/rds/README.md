@@ -8,7 +8,8 @@ Creates the Amazon RDS for PostgreSQL instance used by The Social Network.
 - creates a dedicated security group that only accepts PostgreSQL (port 5432) traffic from explicitly allowed security groups;
 - creates a DB parameter group that forces SSL/TLS connections (`rds.force_ssl`);
 - creates one `aws_db_instance` running PostgreSQL with encrypted storage;
-- lets AWS manage the master password as a Secrets Manager secret (`manage_master_user_password`), so no credential is stored in Terraform state or configuration.
+- lets AWS manage the master password as a Secrets Manager secret (`manage_master_user_password`), so no credential is stored in Terraform state or configuration;
+- creates a dedicated customer-managed KMS key (with rotation enabled) used to encrypt both the storage volume and the managed master password secret, unless `kms_key_id` and/or `master_user_secret_kms_key_id` are supplied explicitly.
 
 The module does not create the VPC, subnets, or the security groups it references as allowed ingress sources. Those belong to their respective modules.
 
@@ -53,7 +54,8 @@ aws secretsmanager get-secret-value \
 ## Notes
 
 - The instance is never publicly accessible (`publicly_accessible = false`). Applications must connect from within the VPC.
-- Storage is encrypted with the default `aws/rds` KMS key unless `kms_key_id` is set.
+- Storage and the managed master password secret are encrypted with a dedicated customer-managed KMS key created by this module, unless `kms_key_id` / `master_user_secret_kms_key_id` are set. A customer-managed key is used instead of the account's default `aws/rds` and `aws/secretsmanager` keys because those may not exist yet in a fresh account/region, which makes `CreateDBInstance` fail with `KMSKeyNotAccessibleFault`.
+- Creating and managing this KMS key requires `kms:*` permissions for the identity running Terraform (see `terraform/bootstrap`).
 - `multi_az`, `deletion_protection`, and `skip_final_snapshot` default to values appropriate for a disposable development environment. Set `multi_az = true`, `deletion_protection = true`, and `skip_final_snapshot = false` for staging and production.
 - RDS storage autoscaling is enabled by default via `max_allocated_storage`. Set it to `0` to disable.
 - `enabled_cloudwatch_logs_exports` publishes PostgreSQL and upgrade logs to CloudWatch Logs.

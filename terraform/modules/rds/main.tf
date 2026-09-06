@@ -1,6 +1,27 @@
 locals {
   resource_prefix        = "${var.name_prefix}-${var.environment}"
   parameter_group_family = "postgres${split(".", var.engine_version)[0]}"
+
+  create_kms_key                = var.kms_key_id == null || var.master_user_secret_kms_key_id == null
+  storage_kms_key_id            = coalesce(var.kms_key_id, try(aws_kms_key.rds[0].arn, null))
+  master_user_secret_kms_key_id = coalesce(var.master_user_secret_kms_key_id, try(aws_kms_key.rds[0].arn, null))
+}
+
+resource "aws_kms_key" "rds" {
+  count = local.create_kms_key ? 1 : 0
+
+  description             = "Encrypts the ${local.resource_prefix} PostgreSQL RDS instance storage and its managed master password secret"
+  deletion_window_in_days = 30
+  enable_key_rotation     = true
+
+  tags = merge(var.tags, { Name = "${local.resource_prefix}-rds-kms" })
+}
+
+resource "aws_kms_alias" "rds" {
+  count = local.create_kms_key ? 1 : 0
+
+  name          = "alias/${local.resource_prefix}-rds"
+  target_key_id = aws_kms_key.rds[0].key_id
 }
 
 resource "aws_db_subnet_group" "this" {
@@ -64,13 +85,13 @@ resource "aws_db_instance" "this" {
   max_allocated_storage = var.max_allocated_storage == 0 ? null : var.max_allocated_storage
   storage_type          = var.storage_type
   storage_encrypted     = true
-  kms_key_id            = var.kms_key_id
+  kms_key_id            = local.storage_kms_key_id
 
   db_name  = var.database_name
   username = var.master_username
 
   manage_master_user_password   = true
-  master_user_secret_kms_key_id = var.master_user_secret_kms_key_id
+  master_user_secret_kms_key_id = local.master_user_secret_kms_key_id
 
   db_subnet_group_name   = aws_db_subnet_group.this.name
   vpc_security_group_ids = [aws_security_group.rds.id]

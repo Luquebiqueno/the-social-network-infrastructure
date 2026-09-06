@@ -218,6 +218,13 @@ data "aws_iam_policy_document" "github_actions_permissions" {
   }
 
   statement {
+    sid       = "ManageKMS"
+    effect    = "Allow"
+    actions   = ["kms:*"]
+    resources = ["*"]
+  }
+
+  statement {
     sid       = "CreateRDSServiceLinkedRole"
     effect    = "Allow"
     actions   = ["iam:CreateServiceLinkedRole"]
