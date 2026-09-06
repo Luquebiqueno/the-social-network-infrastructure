@@ -293,16 +293,16 @@ data "aws_iam_policy_document" "github_actions_permissions" {
   statement {
     sid    = "ManageRDSSecrets"
     effect = "Allow"
-  
+
     actions = [
       "secretsmanager:CreateSecret",
       "secretsmanager:TagResource",
       "secretsmanager:DescribeSecret"
     ]
-  
+
     resources = ["*"]
   }
-  
+
   statement {
     sid       = "ManageKMS"
     effect    = "Allow"
